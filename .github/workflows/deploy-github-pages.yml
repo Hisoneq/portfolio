@@ -13,10 +13,8 @@ permissions:
   pages: write
   id-token: write
 
-# Действия на Node 20 уходят с раннеров; явно переходим на runtime Node 24 для JS-actions.
-# https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/.
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+# Актуальные мажорные версии actions (Node 24 runtime):
+# https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
 
 concurrency:
   group: github-pages
@@ -27,12 +25,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '24'
+          node-version-file: .nvmrc
           cache: npm
 
       - name: Install dependencies
@@ -57,4 +55,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

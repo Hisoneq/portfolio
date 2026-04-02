@@ -1,5 +1,5 @@
 # Деплой на GitHub Pages при пуше в main/master.
-# В настройках репозитория: Settings → Pages → Build and deployment → Source: GitHub Actions.
+# Settings → Pages → Source: GitHub Actions.
 
 name: Deploy GitHub Pages
 
@@ -12,6 +12,11 @@ permissions:
   contents: read
   pages: write
   id-token: write
+
+# Действия на Node 20 уходят с раннеров; явно переходим на runtime Node 24 для JS-actions.
+# https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 concurrency:
   group: github-pages
@@ -27,7 +32,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           cache: npm
 
       - name: Install dependencies
@@ -35,12 +40,11 @@ jobs:
 
       - name: Build
         env:
-          # URL сайта: https://<user>.github.io/<repository>/
           VITE_BASE_PATH: /${{ github.event.repository.name }}/
         run: npm run build
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: dist
 

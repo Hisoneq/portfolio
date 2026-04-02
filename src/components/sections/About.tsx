@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion'
+import mePhoto from '../../assets/me.jpeg'
 import { about, social } from '../../content/site'
 import { ScrollReveal } from '../motion/ScrollReveal'
 
@@ -51,10 +52,14 @@ export function About() {
 
         <div className="space-y-6">
           <ScrollReveal delay={0.08}>
-            <div className="aspect-square w-full max-w-md overflow-hidden rounded-3xl border border-white/10 bg-linear-to-br from-violet-600/30 to-fuchsia-600/20 lg:ml-auto">
-              <div className="flex h-full items-center justify-center p-8 text-center text-sm text-white/70">
-                {about.photoAlt}
-              </div>
+            <div className="relative aspect-3/4 w-full max-w-md overflow-hidden rounded-3xl border border-white/10 bg-elevated shadow-2xl shadow-violet-950/25 ring-1 ring-white/5 lg:ml-auto">
+              <img
+                src={mePhoto}
+                alt={about.photoAlt}
+                className="h-full w-full object-cover object-[center_20%]"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
           </ScrollReveal>
         </div>

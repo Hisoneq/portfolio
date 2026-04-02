@@ -14,7 +14,7 @@ permissions:
   id-token: write
 
 # Действия на Node 20 уходят с раннеров; явно переходим на runtime Node 24 для JS-actions.
-# https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+# https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/.
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 

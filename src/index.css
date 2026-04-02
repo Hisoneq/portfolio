@@ -1,0 +1,104 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --font-display: 'Syne', system-ui, sans-serif;
+  --color-midnight: #07070c;
+  --color-surface: #0e0e16;
+  --color-elevated: #14141f;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-muted: #8b8b9e;
+  --color-fg: #e8e8ef;
+  --color-accent: #a78bfa;
+  --color-accent-dim: rgba(167, 139, 250, 0.15);
+  --color-mint: #5eead4;
+}
+
+@keyframes gradient-flow {
+  0%,
+  100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+}
+
+@keyframes header-border-shine {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes hero-orb-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(1.05);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .motion-reduce\:static-br {
+    animation: none !important;
+    background-position: 50% center !important;
+  }
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  background-color: var(--color-midnight);
+  color: var(--color-fg);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+::selection {
+  background: rgba(167, 139, 250, 0.35);
+  color: #fff;
+}
+
+/* subtle noise overlay */
+.bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+}
+
+.header-shell-border {
+  background: linear-gradient(
+    110deg,
+    rgba(167, 139, 250, 0.55) 0%,
+    rgba(192, 132, 252, 0.2) 25%,
+    rgba(34, 211, 238, 0.45) 50%,
+    rgba(192, 132, 252, 0.25) 75%,
+    rgba(167, 139, 250, 0.5) 100%
+  );
+  background-size: 200% 200%;
+  animation: header-border-shine 8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header-shell-border {
+    animation: none;
+    background-position: 50% 50%;
+  }
+}

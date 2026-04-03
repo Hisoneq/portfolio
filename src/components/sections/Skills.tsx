@@ -1,4 +1,6 @@
-import { motion, useReducedMotion } from 'framer-motion'
+import { useReducedMotion } from 'framer-motion'
+import * as m from 'framer-motion/m'
+import { memo } from 'react'
 import { skills } from '../../content/site'
 import { ScrollReveal } from '../motion/ScrollReveal'
 
@@ -13,7 +15,7 @@ const marqueeItems = [
   'CI/CD',
 ]
 
-export function Skills() {
+export const Skills = memo(function Skills() {
   const reduced = useReducedMotion()
 
   return (
@@ -31,7 +33,7 @@ export function Skills() {
 
         {!reduced ? (
           <div className="relative mt-10 overflow-hidden py-3 mask-[linear-gradient(90deg,transparent,black_12%,black_88%,transparent)]">
-            <motion.div
+            <m.div
               className="flex w-max gap-8 text-sm font-medium text-[#6b6b7e]"
               animate={{ x: ['0%', '-50%'] }}
               transition={{ duration: 28, repeat: Infinity, ease: 'linear' }}
@@ -44,14 +46,14 @@ export function Skills() {
                   {item}
                 </span>
               ))}
-            </motion.div>
+            </m.div>
           </div>
         ) : null}
 
         <div className="mt-12 grid gap-6 sm:grid-cols-2">
           {skills.groups.map((g, gi) => (
             <ScrollReveal key={g.title} delay={0.05 * gi}>
-              <motion.div
+              <m.div
                 className="h-full rounded-2xl border border-white/8 bg-surface p-6"
                 whileHover={reduced ? undefined : { y: -4, borderColor: 'rgba(167,139,250,0.35)' }}
                 transition={{ type: 'spring', stiffness: 400, damping: 28 }}
@@ -64,7 +66,7 @@ export function Skills() {
                 </div>
                 <ul className="mt-5 flex flex-wrap gap-2">
                   {g.items.map((item, ii) => (
-                    <motion.li
+                    <m.li
                       key={item}
                       initial={reduced ? false : { opacity: 0, scale: 0.92 }}
                       whileInView={reduced ? undefined : { opacity: 1, scale: 1 }}
@@ -74,14 +76,14 @@ export function Skills() {
                       <span className="inline-block rounded-lg border border-white/10 bg-white/4 px-3 py-1.5 text-xs text-[#d4d4e3] transition hover:border-violet-500/40 hover:text-white">
                         {item}
                       </span>
-                    </motion.li>
+                    </m.li>
                   ))}
                 </ul>
-              </motion.div>
+              </m.div>
             </ScrollReveal>
           ))}
         </div>
       </div>
     </section>
   )
-}
+})

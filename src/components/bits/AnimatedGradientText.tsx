@@ -1,10 +1,13 @@
 import { useReducedMotion } from 'framer-motion'
-import type { ReactNode } from 'react'
+import { memo, type ReactNode } from 'react'
 
 type Props = { children: ReactNode; className?: string }
 
 /** «Живой» градиент по тексту — движение без тяжёлого canvas. */
-export function AnimatedGradientText({ children, className = '' }: Props) {
+export const AnimatedGradientText = memo(function AnimatedGradientText({
+  children,
+  className = '',
+}: Props) {
   const reduced = useReducedMotion()
 
   return (
@@ -27,4 +30,4 @@ export function AnimatedGradientText({ children, className = '' }: Props) {
       {children}
     </span>
   )
-}
+})

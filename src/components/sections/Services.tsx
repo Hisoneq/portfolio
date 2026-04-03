@@ -1,8 +1,10 @@
-import { motion, useReducedMotion } from 'framer-motion'
+import { useReducedMotion } from 'framer-motion'
+import * as m from 'framer-motion/m'
+import { memo } from 'react'
 import { services } from '../../content/site'
 import { ScrollReveal } from '../motion/ScrollReveal'
 
-export function Services() {
+export const Services = memo(function Services() {
   const reduced = useReducedMotion()
 
   return (
@@ -19,7 +21,7 @@ export function Services() {
         <div className="mt-12 grid gap-6 md:grid-cols-2">
           {services.items.map((item, i) => (
             <ScrollReveal key={item.title} delay={0.06 * i}>
-              <motion.div
+              <m.div
                 className="h-full rounded-2xl border border-white/8 bg-surface p-8"
                 whileHover={reduced ? undefined : { y: -6 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 22 }}
@@ -37,11 +39,11 @@ export function Services() {
                     </li>
                   ))}
                 </ul>
-              </motion.div>
+              </m.div>
             </ScrollReveal>
           ))}
         </div>
       </div>
     </section>
   )
-}
+})

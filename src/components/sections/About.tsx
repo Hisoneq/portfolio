@@ -1,9 +1,11 @@
-import { motion, useReducedMotion } from 'framer-motion'
+import { useReducedMotion } from 'framer-motion'
+import * as m from 'framer-motion/m'
+import { memo } from 'react'
 import mePhoto from '../../assets/me.jpeg'
 import { about, social } from '../../content/site'
 import { ScrollReveal } from '../motion/ScrollReveal'
 
-export function About() {
+export const About = memo(function About() {
   const reduced = useReducedMotion()
 
   return (
@@ -27,7 +29,7 @@ export function About() {
           </div>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            <motion.a
+            <m.a
               href={social.github}
               target="_blank"
               rel="noreferrer"
@@ -36,8 +38,8 @@ export function About() {
               whileTap={reduced ? undefined : { scale: 0.98 }}
             >
               GitHub
-            </motion.a>
-            <motion.a
+            </m.a>
+            <m.a
               href={social.linkedin}
               target="_blank"
               rel="noreferrer"
@@ -46,7 +48,7 @@ export function About() {
               whileTap={reduced ? undefined : { scale: 0.98 }}
             >
               LinkedIn
-            </motion.a>
+            </m.a>
           </div>
         </ScrollReveal>
 
@@ -66,4 +68,4 @@ export function About() {
       </div>
     </section>
   )
-}
+})

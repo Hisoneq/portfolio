@@ -1,7 +1,9 @@
+import { memo } from 'react'
+
 type Props = { className?: string }
 
 /** Лёгкая сетка на фоне — аналог DotGrid / Grid из каталогов эффектов. */
-export function GridPattern({ className = '' }: Props) {
+export const GridPattern = memo(function GridPattern({ className = '' }: Props) {
   return (
     <div
       className={`pointer-events-none absolute inset-0 ${className}`}
@@ -17,4 +19,4 @@ export function GridPattern({ className = '' }: Props) {
       }}
     />
   )
-}
+})

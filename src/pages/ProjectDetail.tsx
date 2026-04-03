@@ -1,10 +1,12 @@
-import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion'
+import { useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion'
+import * as m from 'framer-motion/m'
+import { memo } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { getProjectBySlug, projects } from '../content/site'
 import { GridPattern } from '../components/bits/GridPattern'
 import { ScrollReveal } from '../components/motion/ScrollReveal'
 
-export function ProjectDetail() {
+export const ProjectDetail = memo(function ProjectDetail() {
   const { slug } = useParams<{ slug: string }>()
   const project = slug ? getProjectBySlug(slug) : undefined
   const reduced = useReducedMotion()
@@ -24,7 +26,7 @@ export function ProjectDetail() {
 
   return (
     <>
-      <motion.div
+      <m.div
         className="fixed left-0 right-0 top-0 z-60 h-0.5 origin-left bg-linear-to-r from-violet-500 via-fuchsia-400 to-cyan-400"
         style={{ scaleX }}
       />
@@ -32,13 +34,13 @@ export function ProjectDetail() {
       <main>
         <section className="relative overflow-hidden px-4 pb-8 pt-24 sm:px-6 sm:pt-28">
           <GridPattern />
-          <motion.div
+          <m.div
             className="pointer-events-none absolute inset-0 bg-violet-600/10 blur-[120px]"
             style={{ opacity: reduced ? 0.2 : glow }}
           />
 
           <div className="relative z-10 mx-auto max-w-3xl">
-            <motion.div
+            <m.div
               initial={reduced ? false : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
@@ -69,7 +71,7 @@ export function ProjectDetail() {
                   </span>
                 ))}
               </div>
-            </motion.div>
+            </m.div>
           </div>
         </section>
 
@@ -182,4 +184,4 @@ export function ProjectDetail() {
       </main>
     </>
   )
-}
+})

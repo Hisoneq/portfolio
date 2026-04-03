@@ -1,5 +1,6 @@
-import { motion, useAnimation, useReducedMotion } from 'framer-motion'
-import { type FormEvent, useState } from 'react'
+import { useAnimation, useReducedMotion } from 'framer-motion'
+import * as m from 'framer-motion/m'
+import { type ChangeEvent, type FormEvent, memo, useCallback, useState } from 'react'
 import { budgetOptions, contact } from '../../content/site'
 import { Magnetic } from '../motion/Magnetic'
 import { ScrollReveal } from '../motion/ScrollReveal'
@@ -13,7 +14,7 @@ function parseFormSubmitJson(v: unknown): { message?: string } | null {
   return null
 }
 
-export function Contact() {
+export const Contact = memo(function Contact() {
   const reduced = useReducedMotion()
   const controls = useAnimation()
   const [toast, setToast] = useState<{ text: string; variant: 'ok' | 'err' } | null>(null)
@@ -24,67 +25,83 @@ export function Contact() {
   const [budget, setBudget] = useState('')
   const [message, setMessage] = useState('')
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault()
-    setTriedSubmit(true)
-    if (!name.trim() || !email.trim() || !message.trim()) {
-      await controls.start({
-        x: [0, -6, 6, -4, 4, 0],
-        transition: { duration: 0.4 },
-      })
-      return
-    }
-
-    const budgetLabel = budgetOptions.find((o) => o.value === budget)?.label ?? 'не указан'
-
-    setSending(true)
-    setToast(null)
-
-    try {
-      const res = await fetch(FORMSUBMIT_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify({
-          name: name.trim(),
-          email: email.trim(),
-          message: message.trim(),
-          budget: budgetLabel,
-          _subject: 'Портфолио: заявка с сайта',
-          _template: 'table',
-          _captcha: 'false',
-        }),
-      })
-
-      const data = parseFormSubmitJson(await res.json())
-
-      if (!res.ok) {
-        const msg =
-          typeof data?.message === 'string'
-            ? data.message
-            : 'Не удалось отправить. Проверьте соединение или попробуйте позже.'
-        setToast({ text: msg, variant: 'err' })
+  const handleSubmit = useCallback(
+    async (e: FormEvent) => {
+      e.preventDefault()
+      setTriedSubmit(true)
+      if (!name.trim() || !email.trim() || !message.trim()) {
+        await controls.start({
+          x: [0, -6, 6, -4, 4, 0],
+          transition: { duration: 0.4 },
+        })
         return
       }
 
-      setToast({ text: 'Спасибо! Сообщение отправлено — скоро отвечу.', variant: 'ok' })
-      setName('')
-      setEmail('')
-      setBudget('')
-      setMessage('')
-      setTriedSubmit(false)
-      setTimeout(() => setToast(null), 5000)
-    } catch {
-      setToast({
-        text: 'Ошибка сети. Напишите напрямую на почту или в Telegram.',
-        variant: 'err',
-      })
-    } finally {
-      setSending(false)
-    }
-  }
+      const budgetLabel = budgetOptions.find((o) => o.value === budget)?.label ?? 'не указан'
+
+      setSending(true)
+      setToast(null)
+
+      try {
+        const res = await fetch(FORMSUBMIT_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify({
+            name: name.trim(),
+            email: email.trim(),
+            message: message.trim(),
+            budget: budgetLabel,
+            _subject: 'Портфолио: заявка с сайта',
+            _template: 'table',
+            _captcha: 'false',
+          }),
+        })
+
+        const data = parseFormSubmitJson(await res.json())
+
+        if (!res.ok) {
+          const msg =
+            typeof data?.message === 'string'
+              ? data.message
+              : 'Не удалось отправить. Проверьте соединение или попробуйте позже.'
+          setToast({ text: msg, variant: 'err' })
+          return
+        }
+
+        setToast({ text: 'Спасибо! Сообщение отправлено — скоро отвечу.', variant: 'ok' })
+        setName('')
+        setEmail('')
+        setBudget('')
+        setMessage('')
+        setTriedSubmit(false)
+        setTimeout(() => setToast(null), 5000)
+      } catch {
+        setToast({
+          text: 'Ошибка сети. Напишите напрямую на почту или в Telegram.',
+          variant: 'err',
+        })
+      } finally {
+        setSending(false)
+      }
+    },
+    [name, email, budget, message, controls],
+  )
+
+  const onNameChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value)
+  }, [])
+  const onEmailChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value)
+  }, [])
+  const onBudgetChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
+    setBudget(e.target.value)
+  }, [])
+  const onMessageChange = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
+    setMessage(e.target.value)
+  }, [])
 
   return (
     <section id="contact" className="scroll-mt-24 px-4 py-24 sm:px-6">
@@ -150,7 +167,7 @@ export function Contact() {
           </ScrollReveal>
 
           <ScrollReveal delay={0.1}>
-            <motion.form
+            <m.form
               animate={controls}
               onSubmit={handleSubmit}
               className="rounded-2xl border border-white/8 bg-surface p-6 sm:p-8"
@@ -160,7 +177,7 @@ export function Contact() {
                   <span className="text-[#b8b8c8]">Ваше имя</span>
                   <input
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={onNameChange}
                     className={`mt-2 w-full rounded-xl border bg-elevated px-4 py-3 text-white outline-none ring-violet-500/40 transition placeholder:text-[#5c5c6c] focus:ring-2 ${
                       triedSubmit && !name.trim()
                         ? 'border-red-500/50'
@@ -175,7 +192,7 @@ export function Contact() {
                   <input
                     type="email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={onEmailChange}
                     className={`mt-2 w-full rounded-xl border bg-elevated px-4 py-3 text-white outline-none ring-violet-500/40 transition placeholder:text-[#5c5c6c] focus:ring-2 ${
                       triedSubmit && !email.trim()
                         ? 'border-red-500/50'
@@ -191,7 +208,7 @@ export function Contact() {
                 <span className="text-[#b8b8c8]">Бюджет проекта</span>
                 <select
                   value={budget}
-                  onChange={(e) => setBudget(e.target.value)}
+                  onChange={onBudgetChange}
                   className="mt-2 w-full rounded-xl border border-white/10 bg-elevated px-4 py-3 text-white outline-none ring-violet-500/40 focus:ring-2"
                 >
                   {budgetOptions.map((o) => (
@@ -206,7 +223,7 @@ export function Contact() {
                 <span className="text-[#b8b8c8]">Опишите задачу</span>
                 <textarea
                   value={message}
-                  onChange={(e) => setMessage(e.target.value)}
+                  onChange={onMessageChange}
                   rows={5}
                   className={`mt-2 w-full resize-none rounded-xl border bg-elevated px-4 py-3 text-white outline-none ring-violet-500/40 transition placeholder:text-[#5c5c6c] focus:ring-2 ${
                     triedSubmit && !message.trim()
@@ -217,7 +234,7 @@ export function Contact() {
                 />
               </label>
 
-              <motion.button
+              <m.button
                 type="submit"
                 disabled={sending}
                 className="mt-6 w-full rounded-xl bg-violet-500 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:bg-violet-400 disabled:cursor-not-allowed disabled:opacity-60"
@@ -225,13 +242,13 @@ export function Contact() {
                 whileTap={reduced || sending ? undefined : { scale: 0.98 }}
               >
                 {sending ? 'Отправка…' : 'Отправить сообщение'}
-              </motion.button>
+              </m.button>
 
               <p className="mt-4 text-center text-xs text-[#6b6b7e]">{contact.formNote}</p>
-            </motion.form>
+            </m.form>
 
             {toast ? (
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 className={
@@ -242,11 +259,11 @@ export function Contact() {
                 role="status"
               >
                 {toast.text}
-              </motion.div>
+              </m.div>
             ) : null}
           </ScrollReveal>
         </div>
       </div>
     </section>
   )
-}
+})

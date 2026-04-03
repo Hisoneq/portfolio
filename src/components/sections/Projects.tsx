@@ -1,11 +1,12 @@
-import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from 'framer-motion'
-import { useMemo, useState } from 'react'
+import { AnimatePresence, LayoutGroup, useReducedMotion } from 'framer-motion'
+import * as m from 'framer-motion/m'
+import { type MouseEvent, memo, useCallback, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { ProjectTag } from '../../content/site'
 import { projectFilters, projects } from '../../content/site'
 import { ScrollReveal } from '../motion/ScrollReveal'
 
-export function Projects() {
+export const Projects = memo(function Projects() {
   const reduced = useReducedMotion()
   const [filter, setFilter] = useState<ProjectTag | 'all'>('all')
 
@@ -13,6 +14,11 @@ export function Projects() {
     if (filter === 'all') return projects
     return projects.filter((p) => p.tag === filter)
   }, [filter])
+
+  const onFilterClick = useCallback((e: MouseEvent<HTMLButtonElement>) => {
+    const id = e.currentTarget.dataset.filter as ProjectTag | 'all'
+    setFilter(id)
+  }, [])
 
   return (
     <section id="projects" className="scroll-mt-24 px-4 py-24 sm:px-6">
@@ -35,13 +41,14 @@ export function Projects() {
                     <button
                       key={f.id}
                       type="button"
-                      onClick={() => setFilter(f.id)}
+                      data-filter={f.id}
+                      onClick={onFilterClick}
                       className={`relative rounded-full px-4 py-2 text-xs font-medium transition-colors ${
                         active ? 'text-white' : 'text-muted hover:text-white'
                       }`}
                     >
                       {active ? (
-                        <motion.span
+                        <m.span
                           layoutId="projectFilterPill"
                           className="absolute inset-0 rounded-full bg-violet-500/25 ring-1 ring-violet-400/40"
                           transition={{ type: 'spring', stiffness: 400, damping: 30 }}
@@ -56,10 +63,10 @@ export function Projects() {
           </div>
         </ScrollReveal>
 
-        <motion.div layout className="mt-12 grid gap-6 md:grid-cols-2">
+        <m.div layout className="mt-12 grid gap-6 md:grid-cols-2">
           <AnimatePresence mode="popLayout">
             {filtered.map((project, index) => (
-              <motion.article
+              <m.article
                 key={project.id}
                 layout
                 initial={reduced ? false : { opacity: 0, scale: 0.96, y: 16 }}
@@ -104,19 +111,19 @@ export function Projects() {
                       ))}
                     </div>
 
-                    <motion.span
+                    <m.span
                       className="mt-6 inline-flex w-full items-center justify-center rounded-lg border border-white/15 py-2 text-xs font-medium text-white group-hover:border-violet-400/50 group-hover:bg-violet-500/10"
                       whileHover={reduced ? undefined : { scale: 1.01 }}
                     >
                       Подробнее о кейсе
-                    </motion.span>
+                    </m.span>
                   </div>
                 </Link>
-              </motion.article>
+              </m.article>
             ))}
           </AnimatePresence>
-        </motion.div>
+        </m.div>
       </div>
     </section>
   )
-}
+})

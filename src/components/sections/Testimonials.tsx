@@ -1,12 +1,31 @@
-import { motion, useReducedMotion } from 'framer-motion'
-import { useState } from 'react'
+import { type PanInfo, useReducedMotion } from 'framer-motion'
+import * as m from 'framer-motion/m'
+import { type MouseEvent, memo, useCallback, useState } from 'react'
 import { testimonials } from '../../content/site'
 import { ScrollReveal } from '../motion/ScrollReveal'
 
-export function Testimonials() {
+const n = testimonials.items.length
+
+export const Testimonials = memo(function Testimonials() {
   const reduced = useReducedMotion()
   const [active, setActive] = useState(0)
   const t = testimonials.items[active]
+
+  const onDragEnd = useCallback(
+    (_e: unknown, info: PanInfo) => {
+      if (info.offset.x < -40) {
+        setActive((i) => (i + 1) % n)
+      } else if (info.offset.x > 40) {
+        setActive((i) => (i === 0 ? n - 1 : i - 1))
+      }
+    },
+    [],
+  )
+
+  const onDotClick = useCallback((e: MouseEvent<HTMLButtonElement>) => {
+    const i = Number(e.currentTarget.dataset.index)
+    if (!Number.isNaN(i)) setActive(i)
+  }, [])
 
   return (
     <section id="testimonials" className="scroll-mt-24 px-4 py-24 sm:px-6">
@@ -24,7 +43,7 @@ export function Testimonials() {
           <div className="mx-auto max-w-3xl rounded-3xl border border-white/8 bg-linear-to-br from-elevated to-surface p-8 sm:p-12">
             <div className="flex gap-1 text-amber-300">
               {Array.from({ length: 5 }).map((_, i) => (
-                <motion.span
+                <m.span
                   key={i}
                   initial={reduced ? false : { opacity: 0, y: 6 }}
                   whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
@@ -32,11 +51,11 @@ export function Testimonials() {
                   transition={{ delay: 0.05 * i }}
                 >
                   ★
-                </motion.span>
+                </m.span>
               ))}
             </div>
 
-            <motion.blockquote
+            <m.blockquote
               key={t.quote}
               className="mt-6 text-lg leading-relaxed text-fg sm:text-xl"
               initial={reduced ? false : { opacity: 0, x: 12 }}
@@ -44,18 +63,10 @@ export function Testimonials() {
               transition={{ duration: 0.35 }}
               drag={reduced ? false : 'x'}
               dragConstraints={{ left: 0, right: 0 }}
-              onDragEnd={(_, info) => {
-                if (info.offset.x < -40) {
-                  setActive((i) => (i + 1) % testimonials.items.length)
-                } else if (info.offset.x > 40) {
-                  setActive((i) =>
-                    i === 0 ? testimonials.items.length - 1 : i - 1,
-                  )
-                }
-              }}
+              onDragEnd={onDragEnd}
             >
               {t.quote}
-            </motion.blockquote>
+            </m.blockquote>
 
             <div className="mt-8 flex items-center gap-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-violet-500/25 text-sm font-bold text-violet-200">
@@ -72,11 +83,12 @@ export function Testimonials() {
                 <button
                   key={String(i)}
                   type="button"
+                  data-index={i}
                   aria-label={`Отзыв ${i + 1}`}
                   className={`h-2 rounded-full transition-all ${
                     i === active ? 'w-8 bg-violet-400' : 'w-2 bg-white/20 hover:bg-white/40'
                   }`}
-                  onClick={() => setActive(i)}
+                  onClick={onDotClick}
                 />
               ))}
             </div>
@@ -88,4 +100,4 @@ export function Testimonials() {
       </div>
     </section>
   )
-}
+})

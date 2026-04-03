@@ -1,11 +1,13 @@
+import { useMotionTemplate, useMotionValue } from 'framer-motion'
+import * as m from 'framer-motion/m'
 import {
   type MouseEvent,
   type ReactNode,
+  memo,
   useCallback,
   useRef,
   useState,
 } from 'react'
-import { motion, useMotionTemplate, useMotionValue } from 'framer-motion'
 
 type Props = {
   children: ReactNode
@@ -13,7 +15,7 @@ type Props = {
 }
 
 /** Карточка с «прожектором» по курсору — паттерн из React Bits spotlight border. */
-export function SpotlightCard({ children, className = '' }: Props) {
+export const SpotlightCard = memo(function SpotlightCard({ children, className = '' }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const mx = useMotionValue(-200)
   const my = useMotionValue(-200)
@@ -32,17 +34,20 @@ export function SpotlightCard({ children, className = '' }: Props) {
     [mx, my],
   )
 
+  const onEnter = useCallback(() => setHover(true), [])
+  const onLeaveCard = useCallback(() => setHover(false), [])
+
   return (
-    <motion.div
+    <m.div
       ref={ref}
       className={`relative overflow-hidden rounded-2xl border border-white/8 bg-elevated/80 ${className}`}
       onMouseMove={onMove}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeaveCard}
       whileHover={{ y: -4 }}
       transition={{ type: 'spring', stiffness: 380, damping: 28 }}
     >
-      <motion.div
+      <m.div
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300"
         style={{
           background,
@@ -50,6 +55,6 @@ export function SpotlightCard({ children, className = '' }: Props) {
         }}
       />
       <div className="relative z-10">{children}</div>
-    </motion.div>
+    </m.div>
   )
-}
+})

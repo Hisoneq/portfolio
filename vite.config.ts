@@ -16,4 +16,15 @@ function appBase(): string {
 export default defineConfig({
   base: appBase(),
   plugins: [react(), tailwindcss()],
+  build: {
+    target: 'es2022',
+    cssMinify: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules/framer-motion')) return 'motion'
+        },
+      },
+    },
+  },
 })

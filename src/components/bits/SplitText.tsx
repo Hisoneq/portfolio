@@ -1,4 +1,6 @@
-import { motion, useReducedMotion } from 'framer-motion'
+import { useReducedMotion } from 'framer-motion'
+import * as m from 'framer-motion/m'
+import { memo, useMemo } from 'react'
 
 type Props = {
   text: string
@@ -10,9 +12,14 @@ type Props = {
 /**
  * Стилизованный сплит по словам в духе React Bits (motion stagger).
  */
-export function SplitText({ text, className = '', delay = 0, as: Tag = 'span' }: Props) {
+export const SplitText = memo(function SplitText({
+  text,
+  className = '',
+  delay = 0,
+  as: Tag = 'span',
+}: Props) {
   const prefersReduced = useReducedMotion()
-  const words = text.split(' ')
+  const words = useMemo(() => text.split(' '), [text])
 
   if (prefersReduced) {
     return <Tag className={className}>{text}</Tag>
@@ -22,7 +29,7 @@ export function SplitText({ text, className = '', delay = 0, as: Tag = 'span' }:
     <Tag className={className}>
       {words.map((word, i) => (
         <span key={`${word}-${i}`} className="inline-block overflow-hidden">
-          <motion.span
+          <m.span
             className="inline-block"
             initial={{ y: '100%', opacity: 0, rotate: 4 }}
             animate={{ y: 0, opacity: 1, rotate: 0 }}
@@ -34,9 +41,9 @@ export function SplitText({ text, className = '', delay = 0, as: Tag = 'span' }:
           >
             {word}
             {i < words.length - 1 ? '\u00A0' : null}
-          </motion.span>
+          </m.span>
         </span>
       ))}
     </Tag>
   )
-}
+})

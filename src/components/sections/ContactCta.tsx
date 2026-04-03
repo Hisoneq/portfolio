@@ -1,9 +1,11 @@
-import { motion, useReducedMotion } from 'framer-motion'
+import { useReducedMotion } from 'framer-motion'
+import * as m from 'framer-motion/m'
+import { memo } from 'react'
 import { contactCta } from '../../content/site'
 import { AuroraBackground } from '../bits/AuroraBackground'
 import { ScrollReveal } from '../motion/ScrollReveal'
 
-export function ContactCta() {
+export const ContactCta = memo(function ContactCta() {
   const reduced = useReducedMotion()
 
   return (
@@ -15,15 +17,15 @@ export function ContactCta() {
         </h2>
         <p className="mt-2 text-xl text-violet-200 sm:text-2xl">{contactCta.subtitle}</p>
         <p className="mx-auto mt-4 max-w-lg text-[#b8b8c8]">{contactCta.text}</p>
-        <motion.a
+        <m.a
           href={contactCta.href}
           className="mt-8 inline-flex rounded-full bg-white px-8 py-3 text-sm font-semibold text-midnight shadow-xl transition hover:bg-violet-100"
           whileHover={reduced ? undefined : { scale: 1.04 }}
           whileTap={reduced ? undefined : { scale: 0.98 }}
         >
           {contactCta.button}
-        </motion.a>
+        </m.a>
       </ScrollReveal>
     </section>
   )
-}
+})

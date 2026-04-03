@@ -1,5 +1,3 @@
-import { AnimatePresence, LayoutGroup, useReducedMotion } from 'framer-motion'
-import * as m from 'framer-motion/m'
 import { type MouseEvent, memo, useCallback, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { ProjectTag } from '../../content/site'
@@ -7,7 +5,6 @@ import { projectFilters, projects } from '../../content/site'
 import { ScrollReveal } from '../motion/ScrollReveal'
 
 export const Projects = memo(function Projects() {
-  const reduced = useReducedMotion()
   const [filter, setFilter] = useState<ProjectTag | 'all'>('all')
 
   const filtered = useMemo(() => {
@@ -33,96 +30,79 @@ export const Projects = memo(function Projects() {
               <p className="mt-3 max-w-xl text-[#b8b8c8]">Реальные задачи — реальные результаты</p>
             </div>
 
-            <LayoutGroup>
-              <div className="flex flex-wrap justify-center gap-2 sm:justify-end">
-                {projectFilters.map((f) => {
-                  const active = filter === f.id
-                  return (
-                    <button
-                      key={f.id}
-                      type="button"
-                      data-filter={f.id}
-                      onClick={onFilterClick}
-                      className={`relative rounded-full px-4 py-2 text-xs font-medium transition-colors ${
-                        active ? 'text-white' : 'text-muted hover:text-white'
-                      }`}
-                    >
-                      {active ? (
-                        <m.span
-                          layoutId="projectFilterPill"
-                          className="absolute inset-0 rounded-full bg-violet-500/25 ring-1 ring-violet-400/40"
-                          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                        />
-                      ) : null}
-                      <span className="relative z-10">{f.label}</span>
-                    </button>
-                  )
-                })}
-              </div>
-            </LayoutGroup>
+            <div className="flex flex-wrap justify-center gap-2 sm:justify-end">
+              {projectFilters.map((f) => {
+                const active = filter === f.id
+                return (
+                  <button
+                    key={f.id}
+                    type="button"
+                    data-filter={f.id}
+                    onClick={onFilterClick}
+                    className={`relative rounded-full px-4 py-2 text-xs font-medium transition-colors ${
+                      active
+                        ? 'bg-violet-500/25 text-white ring-1 ring-violet-400/40'
+                        : 'text-muted hover:text-white'
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                )
+              })}
+            </div>
           </div>
         </ScrollReveal>
 
-        <m.div layout className="mt-12 grid gap-6 md:grid-cols-2">
-          <AnimatePresence mode="popLayout">
-            {filtered.map((project, index) => (
-              <m.article
-                key={project.id}
-                layout
-                initial={reduced ? false : { opacity: 0, scale: 0.96, y: 16 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={reduced ? undefined : { opacity: 0, scale: 0.96, y: 12 }}
-                transition={{ type: 'spring', stiffness: 350, damping: 28 }}
-                className="group flex flex-col overflow-hidden rounded-2xl border border-white/8 bg-surface"
+        <div className="mt-12 grid gap-6 md:grid-cols-2">
+          {filtered.map((project, index) => (
+            <article
+              key={project.id}
+              className="group flex flex-col overflow-hidden rounded-2xl border border-white/8 bg-surface"
+            >
+              <Link
+                to={`/projects/${project.slug}`}
+                className="block flex-1 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-violet-500"
               >
-                <Link
-                  to={`/projects/${project.slug}`}
-                  className="block flex-1 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-violet-500"
+                <div
+                  className={`relative h-44 overflow-hidden bg-linear-to-br ${project.coverGradient} transition duration-500 group-hover:scale-[1.03]`}
                 >
-                  <div
-                    className={`relative h-44 overflow-hidden bg-linear-to-br ${project.coverGradient} transition duration-500 group-hover:scale-[1.03]`}
-                  >
-                    <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(7,7,12,0.85))]" />
-                    <span className="absolute left-4 top-4 rounded-full bg-black/40 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur">
-                      {String(index + 1).padStart(2, '0')}
+                  <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(7,7,12,0.85))]" />
+                  <span className="absolute left-4 top-4 rounded-full bg-black/40 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                </div>
+
+                <div className="p-6">
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-muted">
+                    <span className="rounded-md bg-violet-500/15 px-2 py-0.5 text-violet-200">
+                      {project.tagLabel}
                     </span>
+                    <span>{project.year}</span>
                   </div>
+                  <h3 className="mt-3 font-display text-xl font-semibold text-white transition group-hover:text-violet-200">
+                    {project.title}
+                  </h3>
+                  <p className="mt-2 line-clamp-2 text-sm text-[#9a9aad]">{project.task}</p>
 
-                  <div className="p-6">
-                    <div className="flex flex-wrap items-center gap-2 text-xs text-muted">
-                      <span className="rounded-md bg-violet-500/15 px-2 py-0.5 text-violet-200">
-                        {project.tagLabel}
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {project.stack.slice(0, 4).map((tech) => (
+                      <span
+                        key={tech}
+                        className="rounded-md border border-white/10 bg-white/3 px-2 py-1 text-[10px] text-[#c4c4d4]"
+                      >
+                        {tech}
                       </span>
-                      <span>{project.year}</span>
-                    </div>
-                    <h3 className="mt-3 font-display text-xl font-semibold text-white transition group-hover:text-violet-200">
-                      {project.title}
-                    </h3>
-                    <p className="mt-2 line-clamp-2 text-sm text-[#9a9aad]">{project.task}</p>
-
-                    <div className="mt-5 flex flex-wrap gap-2">
-                      {project.stack.slice(0, 4).map((tech) => (
-                        <span
-                          key={tech}
-                          className="rounded-md border border-white/10 bg-white/3 px-2 py-1 text-[10px] text-[#c4c4d4]"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-
-                    <m.span
-                      className="mt-6 inline-flex w-full items-center justify-center rounded-lg border border-white/15 py-2 text-xs font-medium text-white group-hover:border-violet-400/50 group-hover:bg-violet-500/10"
-                      whileHover={reduced ? undefined : { scale: 1.01 }}
-                    >
-                      Подробнее о кейсе
-                    </m.span>
+                    ))}
                   </div>
-                </Link>
-              </m.article>
-            ))}
-          </AnimatePresence>
-        </m.div>
+
+                  <span className="mt-6 inline-flex w-full items-center justify-center rounded-lg border border-white/15 py-2 text-xs font-medium text-white transition group-hover:scale-[1.01] group-hover:border-violet-400/50 group-hover:bg-violet-500/10">
+                    Подробнее о кейсе
+                  </span>
+                </div>
+              </Link>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   )

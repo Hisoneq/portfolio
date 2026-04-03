@@ -1,12 +1,8 @@
-import { useReducedMotion } from 'framer-motion'
-import * as m from 'framer-motion/m'
 import { memo } from 'react'
 import { Link } from 'react-router-dom'
 import { navItems, siteMeta } from '../../content/site'
 
 export const Footer = memo(function Footer() {
-  const reduced = useReducedMotion()
-
   return (
     <footer className="border-t border-white/6 bg-midnight">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-14 sm:px-6 md:flex-row md:items-center md:justify-between">
@@ -15,19 +11,9 @@ export const Footer = memo(function Footer() {
             to="/"
             className="font-display text-lg font-semibold text-white"
           >
-            <m.span
-              className="font-mono text-violet-300"
-              whileHover={
-                reduced
-                  ? undefined
-                  : {
-                      scale: 1.02,
-                      textShadow: '0 0 20px rgba(167,139,250,0.5)',
-                    }
-              }
-            >
+            <span className="font-mono text-violet-300 transition hover:text-violet-200">
               {siteMeta.brand}
-            </m.span>
+            </span>
           </Link>
           <p className="mt-2 max-w-sm text-sm text-muted">{siteMeta.role}</p>
         </div>

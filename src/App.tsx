@@ -1,7 +1,6 @@
 import { lazy, memo, Suspense } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import { Layout } from './components/layout/Layout'
-import { useLenis } from './hooks/useLenis'
 import { Home } from './pages/Home'
 
 const ProjectDetail = lazy(() =>
@@ -13,8 +12,6 @@ const RouteFallback = memo(function RouteFallback() {
 })
 
 export default function App() {
-  useLenis(true)
-
   return (
     <Suspense fallback={<RouteFallback />}>
       <Routes>

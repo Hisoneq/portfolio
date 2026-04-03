@@ -1,10 +1,4 @@
-import {
-  AnimatePresence,
-  LayoutGroup,
-  useScroll,
-  useSpring,
-  useTransform,
-} from 'framer-motion'
+import { AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import * as m from 'framer-motion/m'
 import { memo, useCallback, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
@@ -29,13 +23,12 @@ const DesktopNavAnchor = memo(function DesktopNavAnchor({
       onMouseEnter={() => onHover(item.href)}
       onMouseLeave={onLeave}
     >
-      {hovered ? (
-        <m.span
-          layoutId="navGlow"
-          className="absolute inset-0 -z-10 rounded-full bg-white/[0.09] shadow-[0_0_20px_rgba(167,139,250,0.12)] ring-1 ring-violet-400/25"
-          transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-        />
-      ) : null}
+      <span
+        aria-hidden
+        className={`absolute inset-0 -z-10 rounded-full bg-white/[0.09] shadow-[0_0_20px_rgba(167,139,250,0.12)] ring-1 ring-violet-400/25 transition-opacity duration-200 ${
+          hovered ? 'opacity-100' : 'opacity-0'
+        }`}
+      />
       {item.label}
     </a>
   )
@@ -43,19 +36,13 @@ const DesktopNavAnchor = memo(function DesktopNavAnchor({
 
 const MobileNavItem = memo(function MobileNavItem({
   item,
-  index,
   onClose,
 }: {
   item: NavItem
-  index: number
   onClose: () => void
 }) {
   return (
-    <m.li
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: 0.04 * index, duration: 0.28 }}
-    >
+    <li>
       <a
         href={item.href}
         className="block rounded-xl px-4 py-3.5 text-fg transition hover:bg-violet-500/12"
@@ -63,7 +50,7 @@ const MobileNavItem = memo(function MobileNavItem({
       >
         {item.label}
       </a>
-    </m.li>
+    </li>
   )
 })
 
@@ -75,14 +62,12 @@ export const Header = memo(function Header() {
   const [hoveredNav, setHoveredNav] = useState<string | null>(null)
   const { scrollY, scrollYProgress } = useScroll()
 
-  const scrollSpring = useSpring(scrollY, { stiffness: 120, damping: 32 })
-  const shellPadY = useTransform(scrollSpring, [0, 120], [11, 7])
-  const shellPadX = useTransform(scrollSpring, [0, 120], [14, 10])
-  const shellRadius = useTransform(scrollSpring, [0, 140], [22, 999])
-  /** MotionValue в style — без setState на каждом тике пружины при скролле. */
+  const shellPadY = useTransform(scrollY, [0, 120], [11, 7])
+  const shellPadX = useTransform(scrollY, [0, 120], [14, 10])
+  const shellRadius = useTransform(scrollY, [0, 140], [22, 999])
   const shellRadiusOuter = useTransform(shellRadius, (v) => `${Math.round(v)}px`)
   const shellRadiusInner = useTransform(shellRadius, (v) => `${Math.max(0, Math.round(v) - 1)}px`)
-  const brandScale = useTransform(scrollSpring, [0, 120], [1, 0.94])
+  const brandScale = useTransform(scrollY, [0, 120], [1, 0.94])
   const progressOpacity = useTransform(scrollY, [0, 40], [0.35, 1])
 
   const onNavHover = useCallback((href: string) => setHoveredNav(href), [])
@@ -130,13 +115,10 @@ export const Header = memo(function Header() {
                 <span
                   className="font-mono text-sm font-bold tracking-tight sm:text-base"
                   style={{
-                    backgroundImage:
-                      'linear-gradient(120deg, #c4b5fd, #f0abfc, #67e8f9, #c4b5fd)',
-                    backgroundSize: reduced ? '100% 100%' : '300% 100%',
+                    backgroundImage: 'linear-gradient(120deg, #c4b5fd, #f0abfc, #67e8f9)',
                     WebkitBackgroundClip: 'text',
                     backgroundClip: 'text',
                     color: 'transparent',
-                    animation: reduced ? undefined : 'gradient-flow 4s ease infinite',
                   }}
                 >
                   {siteMeta.brand}
@@ -147,19 +129,17 @@ export const Header = memo(function Header() {
               </Link>
             </m.div>
 
-            <LayoutGroup id="main-nav">
-              <nav className="mx-auto hidden items-center gap-0.5 lg:flex">
-                {navItems.map((item) => (
-                  <DesktopNavAnchor
-                    key={item.href}
-                    item={item}
-                    hovered={hoveredNav === item.href}
-                    onHover={onNavHover}
-                    onLeave={onNavLeave}
-                  />
-                ))}
-              </nav>
-            </LayoutGroup>
+            <nav className="mx-auto hidden items-center gap-0.5 lg:flex">
+              {navItems.map((item) => (
+                <DesktopNavAnchor
+                  key={item.href}
+                  item={item}
+                  hovered={hoveredNav === item.href}
+                  onHover={onNavHover}
+                  onLeave={onNavLeave}
+                />
+              ))}
+            </nav>
 
             <div className="ml-auto hidden shrink-0 items-center gap-2 lg:flex">
               <m.a
@@ -231,8 +211,8 @@ export const Header = memo(function Header() {
               style={{ transformPerspective: 900 }}
             >
               <ul className="flex flex-col gap-0.5">
-                {navItems.map((item, i) => (
-                  <MobileNavItem key={item.href} item={item} index={i} onClose={closeMenu} />
+                {navItems.map((item) => (
+                  <MobileNavItem key={item.href} item={item} onClose={closeMenu} />
                 ))}
               </ul>
               <m.a

@@ -1,26 +1,10 @@
-import { type PanInfo, useReducedMotion } from 'framer-motion'
-import * as m from 'framer-motion/m'
 import { type MouseEvent, memo, useCallback, useState } from 'react'
 import { testimonials } from '../../content/site'
 import { ScrollReveal } from '../motion/ScrollReveal'
 
-const n = testimonials.items.length
-
 export const Testimonials = memo(function Testimonials() {
-  const reduced = useReducedMotion()
   const [active, setActive] = useState(0)
   const t = testimonials.items[active]
-
-  const onDragEnd = useCallback(
-    (_e: unknown, info: PanInfo) => {
-      if (info.offset.x < -40) {
-        setActive((i) => (i + 1) % n)
-      } else if (info.offset.x > 40) {
-        setActive((i) => (i === 0 ? n - 1 : i - 1))
-      }
-    },
-    [],
-  )
 
   const onDotClick = useCallback((e: MouseEvent<HTMLButtonElement>) => {
     const i = Number(e.currentTarget.dataset.index)
@@ -39,34 +23,20 @@ export const Testimonials = memo(function Testimonials() {
           </h2>
         </ScrollReveal>
 
-        <ScrollReveal className="mt-12" delay={0.08}>
+        <ScrollReveal className="mt-12">
           <div className="mx-auto max-w-3xl rounded-3xl border border-white/8 bg-linear-to-br from-elevated to-surface p-8 sm:p-12">
             <div className="flex gap-1 text-amber-300">
               {Array.from({ length: 5 }).map((_, i) => (
-                <m.span
-                  key={i}
-                  initial={reduced ? false : { opacity: 0, y: 6 }}
-                  whileInView={reduced ? undefined : { opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.05 * i }}
-                >
-                  ★
-                </m.span>
+                <span key={i}>★</span>
               ))}
             </div>
 
-            <m.blockquote
+            <blockquote
               key={t.quote}
               className="mt-6 text-lg leading-relaxed text-fg sm:text-xl"
-              initial={reduced ? false : { opacity: 0, x: 12 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.35 }}
-              drag={reduced ? false : 'x'}
-              dragConstraints={{ left: 0, right: 0 }}
-              onDragEnd={onDragEnd}
             >
               {t.quote}
-            </m.blockquote>
+            </blockquote>
 
             <div className="mt-8 flex items-center gap-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-violet-500/25 text-sm font-bold text-violet-200">
@@ -93,7 +63,7 @@ export const Testimonials = memo(function Testimonials() {
               ))}
             </div>
             <p className="mt-4 text-center text-[10px] text-[#6b6b7e]">
-              Свайпните цитату влево/вправо
+              Листайте точками ниже
             </p>
           </div>
         </ScrollReveal>

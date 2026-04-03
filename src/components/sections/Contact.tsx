@@ -1,8 +1,5 @@
-import { useAnimation, useReducedMotion } from 'framer-motion'
-import * as m from 'framer-motion/m'
 import { type ChangeEvent, type FormEvent, memo, useCallback, useState } from 'react'
 import { budgetOptions, contact } from '../../content/site'
-import { Magnetic } from '../motion/Magnetic'
 import { ScrollReveal } from '../motion/ScrollReveal'
 
 const FORMSUBMIT_ENDPOINT = `https://formsubmit.co/ajax/${encodeURIComponent(contact.email)}`
@@ -15,8 +12,6 @@ function parseFormSubmitJson(v: unknown): { message?: string } | null {
 }
 
 export const Contact = memo(function Contact() {
-  const reduced = useReducedMotion()
-  const controls = useAnimation()
   const [toast, setToast] = useState<{ text: string; variant: 'ok' | 'err' } | null>(null)
   const [triedSubmit, setTriedSubmit] = useState(false)
   const [sending, setSending] = useState(false)
@@ -30,10 +25,6 @@ export const Contact = memo(function Contact() {
       e.preventDefault()
       setTriedSubmit(true)
       if (!name.trim() || !email.trim() || !message.trim()) {
-        await controls.start({
-          x: [0, -6, 6, -4, 4, 0],
-          transition: { duration: 0.4 },
-        })
         return
       }
 
@@ -87,7 +78,7 @@ export const Contact = memo(function Contact() {
         setSending(false)
       }
     },
-    [name, email, budget, message, controls],
+    [name, email, budget, message],
   )
 
   const onNameChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -115,7 +106,7 @@ export const Contact = memo(function Contact() {
             <p className="mt-4 text-[#b8b8c8]">{contact.intro}</p>
 
             <div className="mt-8 space-y-4 text-sm">
-              <Magnetic className="inline-block w-full max-w-sm">
+              <div className="inline-block w-full max-w-sm">
                 <a
                   href={`mailto:${contact.email}`}
                   className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/3 px-4 py-3 text-fg transition hover:border-violet-500/40"
@@ -127,8 +118,8 @@ export const Contact = memo(function Contact() {
                     {contact.email}
                   </span>
                 </a>
-              </Magnetic>
-              <Magnetic className="inline-block w-full max-w-sm">
+              </div>
+              <div className="inline-block w-full max-w-sm">
                 <a
                   href={contact.telegramUrl}
                   target="_blank"
@@ -142,8 +133,8 @@ export const Contact = memo(function Contact() {
                     {contact.telegram}
                   </span>
                 </a>
-              </Magnetic>
-              <Magnetic className="inline-block w-full max-w-sm">
+              </div>
+              <div className="inline-block w-full max-w-sm">
                 <a
                   href={contact.linkedinUrl}
                   target="_blank"
@@ -157,7 +148,7 @@ export const Contact = memo(function Contact() {
                     {contact.linkedin}
                   </span>
                 </a>
-              </Magnetic>
+              </div>
             </div>
 
             <p className="mt-8 flex items-center gap-2 text-sm text-muted">
@@ -166,9 +157,8 @@ export const Contact = memo(function Contact() {
             </p>
           </ScrollReveal>
 
-          <ScrollReveal delay={0.1}>
-            <m.form
-              animate={controls}
+          <ScrollReveal>
+            <form
               onSubmit={handleSubmit}
               className="rounded-2xl border border-white/8 bg-surface p-6 sm:p-8"
             >
@@ -234,23 +224,19 @@ export const Contact = memo(function Contact() {
                 />
               </label>
 
-              <m.button
+              <button
                 type="submit"
                 disabled={sending}
                 className="mt-6 w-full rounded-xl bg-violet-500 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:bg-violet-400 disabled:cursor-not-allowed disabled:opacity-60"
-                whileHover={reduced || sending ? undefined : { scale: 1.01 }}
-                whileTap={reduced || sending ? undefined : { scale: 0.98 }}
               >
                 {sending ? 'Отправка…' : 'Отправить сообщение'}
-              </m.button>
+              </button>
 
               <p className="mt-4 text-center text-xs text-[#6b6b7e]">{contact.formNote}</p>
-            </m.form>
+            </form>
 
             {toast ? (
-              <m.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
+              <div
                 className={
                   toast.variant === 'ok'
                     ? 'mt-4 rounded-xl border border-teal-500/30 bg-teal-500/10 px-4 py-3 text-center text-sm text-teal-100'
@@ -259,7 +245,7 @@ export const Contact = memo(function Contact() {
                 role="status"
               >
                 {toast.text}
-              </m.div>
+              </div>
             ) : null}
           </ScrollReveal>
         </div>

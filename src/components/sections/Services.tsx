@@ -1,12 +1,8 @@
-import { useReducedMotion } from 'framer-motion'
-import * as m from 'framer-motion/m'
 import { memo } from 'react'
 import { services } from '../../content/site'
 import { ScrollReveal } from '../motion/ScrollReveal'
 
 export const Services = memo(function Services() {
-  const reduced = useReducedMotion()
-
   return (
     <section id="services" className="scroll-mt-24 px-4 py-24 sm:px-6">
       <div className="mx-auto max-w-6xl">
@@ -19,17 +15,11 @@ export const Services = memo(function Services() {
         </ScrollReveal>
 
         <div className="mt-12 grid gap-6 md:grid-cols-2">
-          {services.items.map((item, i) => (
-            <ScrollReveal key={item.title} delay={0.06 * i}>
-              <m.div
-                className="h-full rounded-2xl border border-white/8 bg-surface p-8"
-                whileHover={reduced ? undefined : { y: -6 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-              >
+          {services.items.map((item) => (
+            <ScrollReveal key={item.title}>
+              <div className="h-full rounded-2xl border border-white/8 bg-surface p-8 transition hover:-translate-y-1.5">
                 <span className="text-3xl">{item.icon}</span>
-                <h3 className="mt-4 font-display text-xl font-semibold text-white">
-                  {item.title}
-                </h3>
+                <h3 className="mt-4 font-display text-xl font-semibold text-white">{item.title}</h3>
                 <p className="mt-3 text-sm text-[#9a9aad]">{item.text}</p>
                 <ul className="mt-6 space-y-2 border-t border-white/6 pt-6">
                   {item.bullets.map((b) => (
@@ -39,7 +29,7 @@ export const Services = memo(function Services() {
                     </li>
                   ))}
                 </ul>
-              </m.div>
+              </div>
             </ScrollReveal>
           ))}
         </div>

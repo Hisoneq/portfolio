@@ -14,37 +14,6 @@
   --color-mint: #5eead4;
 }
 
-@keyframes gradient-flow {
-  0%,
-  100% {
-    background-position: 0% center;
-  }
-  50% {
-    background-position: 100% center;
-  }
-}
-
-@keyframes header-border-shine {
-  0% {
-    background-position: 0% 50%;
-  }
-  100% {
-    background-position: 200% 50%;
-  }
-}
-
-@keyframes hero-orb-pulse {
-  0%,
-  100% {
-    opacity: 0.35;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.55;
-    transform: scale(1.05);
-  }
-}
-
 html {
   scroll-behavior: smooth;
 }
@@ -93,12 +62,5 @@ body {
     rgba(167, 139, 250, 0.5) 100%
   );
   background-size: 200% 200%;
-  animation: header-border-shine 8s linear infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .header-shell-border {
-    animation: none;
-    background-position: 50% 50%;
-  }
+  background-position: 50% 50%;
 }

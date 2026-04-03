@@ -1,4 +1,4 @@
-import { useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion'
+import { useReducedMotion, useScroll, useTransform } from 'framer-motion'
 import * as m from 'framer-motion/m'
 import { memo } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
@@ -11,7 +11,6 @@ export const ProjectDetail = memo(function ProjectDetail() {
   const project = slug ? getProjectBySlug(slug) : undefined
   const reduced = useReducedMotion()
   const { scrollYProgress } = useScroll()
-  const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 28, restDelta: 0.001 })
   const glow = useTransform(scrollYProgress, [0, 0.5, 1], [0.25, 0.5, 0.2])
 
   if (!project) {
@@ -28,7 +27,7 @@ export const ProjectDetail = memo(function ProjectDetail() {
     <>
       <m.div
         className="fixed left-0 right-0 top-0 z-60 h-0.5 origin-left bg-linear-to-r from-violet-500 via-fuchsia-400 to-cyan-400"
-        style={{ scaleX }}
+        style={{ scaleX: scrollYProgress }}
       />
 
       <main>
@@ -40,11 +39,7 @@ export const ProjectDetail = memo(function ProjectDetail() {
           />
 
           <div className="relative z-10 mx-auto max-w-3xl">
-            <m.div
-              initial={reduced ? false : { opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
+            <div>
               <Link
                 to="/#projects"
                 className="inline-flex items-center gap-2 text-sm text-violet-300 transition hover:text-white"
@@ -71,7 +66,7 @@ export const ProjectDetail = memo(function ProjectDetail() {
                   </span>
                 ))}
               </div>
-            </m.div>
+            </div>
           </div>
         </section>
 

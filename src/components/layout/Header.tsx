@@ -1,7 +1,6 @@
 import {
   AnimatePresence,
   LayoutGroup,
-  useMotionValueEvent,
   useScroll,
   useSpring,
   useTransform,
@@ -80,11 +79,11 @@ export const Header = memo(function Header() {
   const shellPadY = useTransform(scrollSpring, [0, 120], [11, 7])
   const shellPadX = useTransform(scrollSpring, [0, 120], [14, 10])
   const shellRadius = useTransform(scrollSpring, [0, 140], [22, 999])
+  /** MotionValue в style — без setState на каждом тике пружины при скролле. */
+  const shellRadiusOuter = useTransform(shellRadius, (v) => `${Math.round(v)}px`)
+  const shellRadiusInner = useTransform(shellRadius, (v) => `${Math.max(0, Math.round(v) - 1)}px`)
   const brandScale = useTransform(scrollSpring, [0, 120], [1, 0.94])
   const progressOpacity = useTransform(scrollY, [0, 40], [0.35, 1])
-
-  const [radiusPx, setRadiusPx] = useState(22)
-  useMotionValueEvent(shellRadius, 'change', (v) => setRadiusPx(Math.round(v)))
 
   const onNavHover = useCallback((href: string) => setHoveredNav(href), [])
   const onNavLeave = useCallback(() => setHoveredNav(null), [])
@@ -110,13 +109,13 @@ export const Header = memo(function Header() {
         <m.div
           className="header-shell-border pointer-events-auto w-full max-w-5xl p-px shadow-[0_8px_40px_-4px_rgba(88,28,135,0.35)]"
           style={{
-            borderRadius: `${radiusPx}px`,
+            borderRadius: shellRadiusOuter,
           }}
         >
           <m.div
             className="flex w-full min-w-0 items-center gap-1 border border-white/5 bg-midnight/55 backdrop-blur-2xl sm:gap-2"
             style={{
-              borderRadius: `${Math.max(0, radiusPx - 1)}px`,
+              borderRadius: shellRadiusInner,
               paddingLeft: shellPadX,
               paddingRight: shellPadX,
               paddingTop: shellPadY,

@@ -1,6 +1,25 @@
 import type Lenis from 'lenis'
-import { useEffect } from 'react'
+import { useEffect, useSyncExternalStore } from 'react'
 import { useReducedMotion } from './useReducedMotion'
+
+function subscribeLenisViewport(cb: () => void) {
+  const mq1 = window.matchMedia('(pointer: coarse)')
+  const mq2 = window.matchMedia('(max-width: 768px)')
+  mq1.addEventListener('change', cb)
+  mq2.addEventListener('change', cb)
+  return () => {
+    mq1.removeEventListener('change', cb)
+    mq2.removeEventListener('change', cb)
+  }
+}
+
+function getLenisViewportSkip() {
+  if (typeof window === 'undefined') return true
+  return (
+    window.matchMedia('(pointer: coarse)').matches ||
+    window.matchMedia('(max-width: 768px)').matches
+  )
+}
 
 function scheduleIdle(cb: () => void) {
   if (typeof requestIdleCallback !== 'undefined') {
@@ -13,9 +32,14 @@ function scheduleIdle(cb: () => void) {
 
 export function useLenis(enabled = true) {
   const reducedMotion = useReducedMotion()
+  const skipMobileLayout = useSyncExternalStore(
+    subscribeLenisViewport,
+    getLenisViewportSkip,
+    () => true,
+  )
 
   useEffect(() => {
-    if (!enabled || reducedMotion) return
+    if (!enabled || reducedMotion || skipMobileLayout) return
 
     let cancelled = false
     let raf = 0
@@ -43,5 +67,5 @@ export function useLenis(enabled = true) {
       cancelAnimationFrame(raf)
       lenis?.destroy()
     }
-  }, [enabled, reducedMotion])
+  }, [enabled, reducedMotion, skipMobileLayout])
 }
